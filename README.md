@@ -1,5 +1,6 @@
 # Lander
+![Lander-Logo](https://github.com/WesFerreira/Lander/blob/master/LanderLogo.png)
 An Electron based app for Box2d world bodies (web or not).
-For while it is **specific to personal usage**, depending on the need I can release a standard version of it
+For while it is **specific to personal usage**, depending on the need I can release a standard version of it.
 
 ♥ **Thank you for coming** ♥
