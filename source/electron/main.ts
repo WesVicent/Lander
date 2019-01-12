@@ -2,25 +2,36 @@
  * @Author: WesFerreira - https://github.com/WesFerreira
  * @Date: 2019-01-12 07:42:52
  * @Last Modified by: WesFerreira
- * @Last Modified time: 2019-01-12 08:22:03
+ * @Last Modified time: 2019-01-12 09:14:17
  */
 
 
-import {app, BrowserWindow} from "electron";
+import { app, BrowserWindow, globalShortcut } from "electron";
 
 let win: BrowserWindow;
 
-function createWindow () {
-    // Create the browser window.
-    win = new BrowserWindow();
+function createWindow() {
+    // tslint:disable:object-literal-sort-keys
+    win = new BrowserWindow({
+        webPreferences: {
+            nodeIntegration: false,
+            webSecurity: false,
+
+        },
+    });
+
+    globalShortcut.register("f5", function () {
+        win.reload();
+    });
+
+
     win.setMenu(null);
     win.maximize();
 
     // and load the index.html of the app.
     win.loadFile("./dist/index.html");
 
-    // Open the DevTools.
-    // win.webContents.openDevTools();
+    win.webContents.openDevTools();
 
     // Emitted when the window is closed.
     win.on("closed", () => {
