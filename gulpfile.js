@@ -1,24 +1,21 @@
-// Grab our gulp packages
+var pckg = require('./package.json');
+
 var gulp = require('gulp'),
     rename = require('gulp-rename'),
-    browserify = require('browserify'),
     source = require('vinyl-source-stream'),
-    concat = require('gulp-concat'),
-    buffer = require('vinyl-buffer'),
-    tsc = require('gulp-typescript'),
     sourcemaps = require('gulp-sourcemaps'),
     notify = require('gulp-notify'),
     uglify = require('gulp-uglify');
 
-var pckg = require('./package.json');
-// console.log(pckg);
-var tsProject = tsc.createProject('tsconfig.json');
+var tsc = require('gulp-typescript'),
+    tsProject = tsc.createProject('tsconfig.json'),
+    browserify = require('browserify'),
+    concat = require('gulp-concat'),
+    buffer = require('vinyl-buffer');
 
-function swallowError(error) {
-    // If you want details of the error in the console
-    console.log(error.toString())
-    this.emit('end')
-}
+var sass = require('gulp-sass'),
+    cssnano = require('gulp-cssnano'),
+    autoprefixer = require('gulp-autoprefixer');
 
 /////////////////////////////////////////////////////////////////////////////////
 //                                VARIABLES                                    //
@@ -29,18 +26,21 @@ var names = {
 };
 
 var paths = {
+    dist: './dist/',
     scripts: {
         sourceTS: [
-            'source/**/*.ts',
-            'source/typings/**.d.ts/',
-            'source/interfaces/interfaces.d.ts'
+            './source/**/*.ts',
+            './source/typings/**.d.ts/',
+            './source/interfaces/interfaces.d.ts'
         ],
-        sourceJS: './js/processed/',
-        dist: './dist/'
+        sourceJS: './processed/js/',
+    },
+    scss: {
+        sourceSASS: './sass/**/*.scss'
     },
     libs: [
-        'node_modules/box2dweb/box2d.js',
-        'node_modules/pixi.js/dist/pixi.js'
+        './node_modules/box2dweb/box2d.js',
+        './node_modules/pixi.js/dist/pixi.js'
     ]
 };
 
@@ -55,7 +55,7 @@ gulp.task('bundle:libs', function () {
         .pipe(rename('libs.min.js'))
         .pipe(uglify())
         .pipe(sourcemaps.write('./'))
-        .pipe(gulp.dest(paths.scripts.dist)
+        .pipe(gulp.dest(paths.dist)
         );
 });
 
@@ -78,16 +78,56 @@ gulp.task('bundle:core', function () {
                 .pipe(sourcemaps.init({ loadMaps: true }))
                 .pipe(uglify())
                 .pipe(sourcemaps.write('./'))
-                .pipe(gulp.dest(paths.scripts.dist));
+                .pipe(gulp.dest(paths.dist));
         }));
 });
 gulp.task('watch:core', function () {
     gulp.watch(paths.scripts.sourceTS, ['bundle:core']);
 
-    gulp.watch("dist/core.min.js").on('change', function () {
-        notify({
-            title: pckg.name,
-            message: 'By ' + pckg.author + '\nThanks for coming ♥' + '\nversion: ' + pckg.version
-        }).write('');
+    gulp.watch('./dist/core.min.js').on('change', function () {
+        defaultNotification();
     });
 });
+
+/////////////////////////////////////////////////////////////////////////////////
+//                                  SASS                                       //
+/////////////////////////////////////////////////////////////////////////////////
+gulp.task('bundle:sass', function () {
+    return gulp.src(paths.scss.sourceSASS)
+        .pipe(sourcemaps.init())
+        .pipe(sass())
+        .on("error", swallowError)
+        .pipe(autoprefixer({
+            browsers: ['last 2 versions'],
+            cascade: false
+        }))
+        .pipe(gulp.dest(paths.dist))
+        .pipe(rename({ suffix: '.min' }))
+        .pipe(cssnano())
+        .pipe(sourcemaps.write('.'))
+        .pipe(gulp.dest(paths.dist));
+});
+gulp.task('watch:sass', function () {
+    gulp.watch(paths.scss.sourceSASS, ['bundle:sass']);
+
+    gulp.watch("./dist/app.min.css").on('change', function () {
+        defaultNotification();
+    });
+});
+
+/////////////////////////////////////////////////////////////////////////////////
+//                                  MISC                                       //
+/////////////////////////////////////////////////////////////////////////////////
+
+function swallowError(error) {
+    // If you want details of the error in the console
+    console.log(error.toString())
+    this.emit('end')
+}
+
+function defaultNotification () {
+    notify({
+        title: pckg.name,
+        message: 'By ' + pckg.author + '\nThanks for coming ♥' + '\nversion: ' + pckg.version
+    }).write('');
+}
