@@ -2,12 +2,12 @@
  * @Author: WesFerreira - https://github.com/WesFerreira
  * @Date: 2019-01-03 00:52:34
  * @Last Modified by: WesFerreira
- * @Last Modified time: 2019-01-03 01:28:55
+ * @Last Modified time: 2019-01-12 07:49:31
  */
 
 import { injectable, inject } from "inversify";
-import { IBox2App, IBox2AppSetters } from "../interfaces/IBox2App";
 import IDENTFIER from "../Identifiers";
+import { IBox2App, IBox2AppSetters } from "../Mon-chan";
 
 @injectable()
 export class Box2AppService implements IBox2App {

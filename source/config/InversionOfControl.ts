@@ -8,6 +8,7 @@
 import "reflect-metadata";
 import { Mon, IBox2App, B2AppOptions } from "../Mon-chan";
 import IDENTFIER from "../Identifiers";
+import { Container } from "inversify";
 
 let dependencyContainer = new Container();
 
