@@ -7,7 +7,7 @@
     "type": "git",
     "url": "https://github.com/WesFerreira/Lander"
   },
-  "main": "js/processed/electron/main.js",
+  "main": "./processed/js/electron/main.js",
   "scripts": {
     "start": "electron ."
   },

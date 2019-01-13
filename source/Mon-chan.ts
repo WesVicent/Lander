@@ -2,7 +2,7 @@
  * @Author: WesFerreira - https://github.com/WesFerreira
  * @Date: 2019-01-02 07:01:52
  * @Last Modified by: WesFerreira
- * @Last Modified time: 2019-01-03 01:30:29
+ * @Last Modified time: 2019-01-12 17:52:25
  */
 
 import { injectable, inject } from "inversify";
@@ -11,6 +11,7 @@ export namespace Mon {
     export namespace Helpers {
         @injectable()
         export class Box2App implements IBox2App {
+            public app: HTMLCanvasElement;
             public world: Box2D.Dynamics.b2World;
             public scale = 30;
 
@@ -62,9 +63,12 @@ export namespace Mon {
             }
 
             constructor(@inject("B2AppOptions") options: B2AppOptions) {
-
-                this.w = options.w;
-                this.h = options.h;
+                if (options.w) {
+                    this.w = options.w;
+                }
+                if (options.h) {
+                    this.h = options.h;
+                }
 
                 if (!options.gravity) { // Default gravity.
                     options.gravity = new Box2D.Common.Math.b2Vec2(0, 9.8);
@@ -73,18 +77,40 @@ export namespace Mon {
                 this.world = new Box2D.Dynamics.b2World(options.gravity, options.allowSleep);
 
                 if (options.debug) {
-                    this.addDebugView();
+                    this.app = this.addDebugView(options.containerId, options.customStyles, options.addClass);
                     this.setupDebugDraw();
                 }
             }
 
-            private addDebugView() {
+            public removeCanvasFuzz(minWidth: number, minHeight: number): void {
+                this.app.width = minWidth * 2;
+                this.app.height = minHeight * 2;
+                this.app.getContext("2d").scale(2, 2);
+            }
+
+            private addDebugView(containerId: string, customStyles: string, addClass: string) {
                 let box2App = document.createElement("canvas");
-                box2App.width = this.w;
-                box2App.height = this.h;
                 box2App.setAttribute("id", "debugView");
-                box2App.style.cssText = "background-color: rgba(255, 255, 255, 0.4); position: absolute;";
-                document.body.insertBefore(box2App, document.body.getElementsByTagName("canvas")[0]);
+                if (this.w) {
+                    box2App.width = this.w;
+                }
+                if (this.h) {
+                    box2App.height = this.h;
+                }
+                if (customStyles) {
+                    box2App.style.cssText = customStyles;
+                } else {
+                    box2App.style.cssText = "background-color: rgba(255, 255, 255, 0.4); position: absolute;";
+                }
+                if (addClass) {
+                    box2App.className += addClass;
+                }
+                if (containerId) {
+                    return (<HTMLDivElement>document.getElementById(containerId))
+                        .insertBefore(box2App, document.body.getElementsByTagName("canvas")[0]);
+                } else {
+                    return document.body.insertBefore(box2App, document.body.getElementsByTagName("canvas")[0]);
+                }
             }
 
             private setupDebugDraw() {
@@ -104,10 +130,12 @@ export namespace Mon {
 //                               INTERFACES                                     //
 //////////////////////////////////////////////////////////////////////////////////
 export interface IBox2App {
+    app: HTMLCanvasElement;
     world: Box2D.Dynamics.b2World;
     scale: number;
     set: IBox2AppSetters;
     applyPhysics: () => void;
+    removeCanvasFuzz(minWidth: number, minHeight: number): void;
 }
 
 export interface IBox2AppSetters {
@@ -125,8 +153,11 @@ export interface IBox2AppSetters {
 
 export interface B2AppOptions {
     debug?: boolean;
+    containerId?: string;
+    customStyles?: string;
+    addClass?: string;
     gravity?: Box2D.Common.Math.b2Vec2;
     allowSleep?: boolean;
-    w: number;
-    h: number;
+    w?: number;
+    h?: number;
 }

@@ -2,7 +2,7 @@
  * @Author: WesFerreira - https://github.com/WesFerreira
  * @Date: 2019-01-12 07:42:52
  * @Last Modified by: WesFerreira
- * @Last Modified time: 2019-01-12 09:14:17
+ * @Last Modified time: 2019-01-12 18:05:01
  */
 
 import { app, BrowserWindow, globalShortcut } from "electron";
@@ -23,10 +23,12 @@ function createWindow() {
     win.setMenu(null);
 
     win.loadFile("./dist/index.html");
-    win.webContents.openDevTools();
 
     globalShortcut.register("f5", function () {
         win.reload();
+    });
+    globalShortcut.register("f1", function () {
+        win.webContents.openDevTools();
     });
     ///////////////////////////////////////////
 

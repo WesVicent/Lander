@@ -1,0 +1,43 @@
+@mixin generate-grid($columns, $size: '') {
+    @for $i from 1 through $columns {
+        $width: calc(100% / ( #{$columns} / #{$i}));
+        @if($size=='') {
+            .col-#{$i}-#{$columns} {
+                width: $width;
+            }
+            .col-offset-#{$i}-#{$columns} {
+                margin-left: $width;
+            }
+        }
+        @else {
+            .col-#{$size}-#{$i}-#{$columns} {
+                width: $width;
+            }
+            .col-#{$size}-offset-#{$i}-#{$columns} {
+                margin-left: $width;
+            }
+        }
+    }
+}
+
+// style
+@include generate-grid(16);
+@media (min-width: 1200px) {
+    @include generate-grid(16, 'lg');
+}
+
+* {
+    box-sizing: border-box;
+}
+
+[class*="col-"] {
+    float: left;
+}
+
+.row {
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    -ms-flex-wrap: wrap;
+    flex-wrap: wrap;
+}
