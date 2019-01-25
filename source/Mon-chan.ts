@@ -158,6 +158,6 @@ export interface B2AppOptions {
     addClass?: string;
     gravity?: Box2D.Common.Math.b2Vec2;
     allowSleep?: boolean;
-    w?: number;
-    h?: number;
+    w: number;
+    h: number;
 }

@@ -2,7 +2,7 @@
  * @Author: WesFerreira - https://github.com/WesFerreira
  * @Date: 2019-01-03 00:52:34
  * @Last Modified by: WesFerreira
- * @Last Modified time: 2019-01-12 17:24:52
+ * @Last Modified time: 2019-01-25 02:28:55
  */
 
 import { injectable, inject } from "inversify";
