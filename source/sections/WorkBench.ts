@@ -10,12 +10,14 @@ import { B2AppOptions } from "../Mon-chan";
 import dependencyContainer, { initBox2App } from "../config/InversionOfControl";
 import { Box2AppService } from "../services/Box2AppService";
 import { GridLayer } from "../layers/GridLayer";
-import { Vertex, ILine } from "../entities/polygon/Vertex";
+import { Poly } from "../entities/polygon/Poly";
 
 export class WorkBench {
     public b2App: Box2AppService;
     public pixiApp: PIXI.Application;
-    private line: ILine;
+    public poly = new Poly();
+
+    private clicks = 0;
 
     constructor (b2Options: B2AppOptions) {
         this.pixiApp = new PIXI.Application({
@@ -34,14 +36,25 @@ export class WorkBench {
     }
 
     public drawPoly(x: number, y: number) {
-        this.line = Vertex.addLine(x, y);
+        if (this.clicks === 0) {
+            this.pixiApp.stage.addChild(this.poly.drawFirstVertex(x, y), this.poly.draw(x, y));
+            this.clicks++;
+        } else {
+            if (this.poly.isOpen) {
+                this.pixiApp.stage.removeChild(this.poly.firstVertex);
 
-        if (this.line.points.length > 2) {
-            this.pixiApp.stage.removeChild(this.line.poly);
+                this.poly.redraw();
+                this.pixiApp.stage.addChild(this.poly.draw(x, y), this.poly.drawLastVertex(x, y));
+                this.pixiApp.stage.addChild(this.poly.firstVertex);
+            }
         }
+    }
 
-        this.pixiApp.stage.addChild(Vertex.addPoint(x, y));
-        this.pixiApp.stage.addChild(this.line.poly);
-        Vertex.highlightVertex();
+    public addListenners() {
+        this.poly.firstVertex.on("click", (e) => {
+            this.poly.close();
+            this.poly.redraw();
+            console.log("polyClick");
+        });
     }
 }

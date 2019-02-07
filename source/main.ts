@@ -10,16 +10,18 @@ import { WorkBench } from "./sections/WorkBench";
 
 let wBench: WorkBench;
 
-window.onload = function() {
+window.onload = function () {
     wBench = new WorkBench({
         containerId: "container",
         w: window.innerWidth,
         h: window.innerHeight,
-        debug: true,
+        debug: false,
         allowSleep: true,
     });
 
-    window.addEventListener("mousedown", function(e) {
+    wBench.addListenners();
+
+    window.addEventListener("mousedown", function (e) {
         if (e.button === 0) { // If left button
             wBench.drawPoly(e.clientX, e.clientY);
         }
