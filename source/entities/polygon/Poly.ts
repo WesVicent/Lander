@@ -51,7 +51,7 @@ export class Poly extends PIXI.Graphics {
     }
     public close() {
         this.vertexPoints.close();
-        this.drawLastVertex(this.vertexList[0], this.vertexList[1]);
+        // this.drawLastVertex(this.vertexList[0], this.vertexList[1]);
         this.isOpen = false;
     }
 

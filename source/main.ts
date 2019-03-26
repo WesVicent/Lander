@@ -2,7 +2,7 @@
  * @Author: WesFerreira - https://github.com/WesFerreira
  * @Date: 2019-01-12 07:42:41
  * @Last Modified by: WesFerreira
- * @Last Modified time: 2019-01-25 18:54:10
+ * @Last Modified time: 2019-03-11 04:20:13
  */
 // tslint:disable:object-literal-sort-keys
 
@@ -21,10 +21,6 @@ window.onload = function () {
 
     wBench.addListenners();
 
-    window.addEventListener("mousedown", function (e) {
-        if (e.button === 0) { // If left button
-            wBench.drawPoly(e.clientX, e.clientY);
-        }
-    });
+
 };
 
