@@ -76,21 +76,25 @@ export class Poly extends PIXI.Graphics {
         vertex.name = this.vertexPointList.length.toString();
 
         this.vertexPointList.push(vertex);
-        let index = Number.parseInt(vertex.name);
+        let index: number;
 
         vertex.on("mouseover", () => { // <MOVE>
+            index = Number.parseInt(vertex.name);
+
             // Adds event style
             vertex.clear();
             vertex = this.vertexOverStyle(vertex, this.vertexCoodinates.vertex[index].x,
                 this.vertexCoodinates.vertex[index].y);
         });
         vertex.on("mouseout", () => { // <MOVE>
+            index = Number.parseInt(vertex.name);
             // Adds event style
             vertex.clear();
             vertex = this.vertexStyle(vertex, this.vertexCoodinates.vertex[index].x,
                 this.vertexCoodinates.vertex[index].y);
         });
         vertex.on("mousedown", () => { // <MOVE>
+            index = Number.parseInt(vertex.name);
             SharedPrefs.getInstance().clickedVertex = index; // Store the value to prevent loses
 
             // Adds event style
@@ -102,6 +106,7 @@ export class Poly extends PIXI.Graphics {
             this.vertexDragging = true;
         });
         vertex.on("mouseup", () => { // <MOVE>
+            index = Number.parseInt(vertex.name);
             // Adds event style
             vertex.clear();
             vertex = this.vertexOverStyle(vertex, this.vertexCoodinates.vertex[index].x,
@@ -114,6 +119,20 @@ export class Poly extends PIXI.Graphics {
             vertex.position.y = this.vertexCoodinates.vertex[SharedPrefs.getInstance().clickedVertex].y;
 
             delete (SharedPrefs.getInstance().clickedVertex); // Cleans to next
+        });
+        vertex.on("rightclick", () => { // <MOVE>
+            index = Number.parseInt(vertex.name); // Update name
+
+            this.vertexPointList.splice(index, 1); // Remove from array
+            vertex.destroy(true);   // Destroy removed
+            this.vertexCoodinates.vertex.splice(index, 1);
+            this.vertexCoodinates.raw.splice(index + index, 2);
+
+            for (let i = 0; i <= this.vertexPointList.length - 1; i++) {
+                this.vertexPointList[i].name = i.toString(); // Rename all vertex points
+            }
+
+            this.redraw();
         });
         vertex.on("mousemove", () => { // <MOVE>
             if (this.vertexDragging) {
