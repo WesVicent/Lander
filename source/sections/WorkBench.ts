@@ -11,6 +11,7 @@ import dependencyContainer, { initBox2App } from "../config/InversionOfControl";
 import { Box2AppService } from "../services/Box2AppService";
 import { GridLayer } from "../layers/GridLayer";
 import { Poly } from "../entities/polygon/Poly";
+import { SharedPrefs } from "../SharedPrefs";
 
 export class WorkBench {
     public b2App: Box2AppService;
@@ -35,6 +36,7 @@ export class WorkBench {
         this.bench.beginFill(0x444444);
         this.bench.drawRect(0, 0, this.pixiApp.renderer.view.width, this.pixiApp.renderer.view.height);
         this.pixiApp.stage.addChild(this.bench);
+        SharedPrefs.getInstance().bench = this.bench;
 
         initBox2App(b2Options);
         this.b2App = dependencyContainer.resolve<Box2AppService>(Box2AppService);
@@ -44,31 +46,38 @@ export class WorkBench {
 
     public drawPoly(x: number, y: number) {
         if (this.clicks === 0) {
-            this.bench.addChild(this.poly.drawFirstVertex(x, y), this.poly.draw(x, y));
+            this.bench.addChild(this.poly.addMainVertex(x, y), this.poly.draw(x, y));
             this.clicks++;
         } else {
             if (this.poly.isOpen) {
-                this.bench.removeChild(this.poly.firstVertex);
+                this.bench.removeChild(this.poly.mainVertex);
 
                 this.poly.redraw();
-                this.bench.addChild(this.poly.draw(x, y), this.poly.drawLastVertex(x, y));
-                this.bench.addChild(this.poly.firstVertex);
-                console.log("oi");
+                this.bench.addChild(this.poly.draw(x, y), this.poly.addVertex(x, y));
 
+                this.bench.addChild(this.poly.mainVertex);
             }
         }
     }
 
     public addListenners() {
-        this.poly.firstVertex.on("click", (e) => {
+
+        this.poly.mainVertex.on("click", (e) => {
             this.poly.close();
             this.poly.redraw();
-            console.log("polyClick");
         });
+
         this.bench.on("click", (e) => {
             this.drawPoly(this.pixiApp.renderer.plugins.interaction.mouse.global.x,
                 this.pixiApp.renderer.plugins.interaction.mouse.global.y);
+        });
+    }
 
+    public enableToClosePoly() {
+        this.bench.removeListener("click");
+        this.bench.on("click", (e) => {
+            this.poly.close();
+            this.poly.redraw();
         });
     }
 }
