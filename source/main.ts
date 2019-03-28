@@ -19,28 +19,41 @@ window.onload = function () {
         debug: false,
         allowSleep: true,
     });
+    /*
+        wBench.addListenners();
 
-    wBench.addListenners();
+        window.addEventListener("keydown", function(e) {
+            if (e.keyCode === 18) { // ALT
+                wBench.enableToClosePoly();
+            }
+        });
 
-    window.addEventListener("keydown", function(e) {
-        if (e.keyCode === 18) { // ALT
-            wBench.enableToClosePoly();
-        }
+        window.addEventListener("mousemove", function (e) {
+
+            SharedPrefs.getInstance().mouseX = e.clientX;
+            SharedPrefs.getInstance().mouseY = e.clientY;
+
+        }); */
+
+    let g = new PIXI.Graphics();
+
+    g.lineStyle(1, 0xccffcc);
+
+    g.moveTo(0, 3);
+    g.lineTo(250, 3);
+    g.interactive = true;
+    g.beginFill(0xffffff, 0);
+    g.lineStyle(1, 0xccffcc, 0);
+    g.drawRect(0, 0, 250, 6);
+    g.endFill();
+    g.position.x = 500;
+    g.position.y = 200;
+
+    g.on("click", function () {
+        console.log("MetaClick");
+
     });
 
-    window.addEventListener("mousemove", function (e) {
-
-        SharedPrefs.getInstance().mouseX = e.clientX;
-        SharedPrefs.getInstance().mouseY = e.clientY;
-
-    });
-
-    wBench.pixiApp.view.addEventListener("mousemove", function () { // <MOVE>
-        /* SharedPrefs.getInstance().mouseX = wBench.pixiApp.renderer.plugins.interaction.mouse.global.x;
-        SharedPrefs.getInstance().mouseY = wBench.pixiApp.renderer.plugins.interaction.mouse.global.y; */
-
-        // console.log("bX:", SharedPrefs.getInstance().mouseX, " bY:", SharedPrefs.getInstance().mouseY);
-
-    });
+    wBench.pixiApp.stage.addChild(g);
 };
 

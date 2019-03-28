@@ -12,6 +12,11 @@ export class SharedPrefs {
     public mouseY: number;
     public bench: PIXI.Graphics; // <IMPROVE> add WorkBench depencency in Poly.
     public clickedVertex: number; // <IMPROVE>
+    public color = {
+        main: 0xffd428,
+        secondary: 0xbe0cff,
+        white: 0xffffff,
+    };
 
     public static getInstance() {
         return this._instance || (this._instance = new this());

@@ -52,8 +52,9 @@ export class WorkBench {
             if (this.poly.isOpen) {
                 this.bench.removeChild(this.poly.mainVertex);
 
-                this.poly.redraw();
-                this.bench.addChild(this.poly.draw(x, y), this.poly.addVertex(x, y));
+                // this.poly.redraw();
+                this.bench.removeChild(this.poly);
+                this.bench.addChild(this.poly.draw(x, y), this.poly.addVertex(x, y)/* , this.poly.drawLine(x, y) */);
 
                 this.bench.addChild(this.poly.mainVertex);
             }

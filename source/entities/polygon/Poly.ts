@@ -4,12 +4,23 @@
  * @Last Modified by: WesFerreiraaa
  * @Last Modified time: 2019-03-27 02:21:2777
 */
+// tslint:disable:object-literal-sort-keys
 
 import { SharedPrefs } from "../../SharedPrefs";
 import { Graphics } from "pixi.js";
 
 export class Poly extends PIXI.Graphics {
     public mainVertex = new PIXI.Graphics();
+    public lines: {
+        lineTo: { x: number, y: number },
+        moveTo: { x: number, y: number },
+        entity: PIXI.Graphics,
+    } = {
+            lineTo: { x: null, y: null },
+            moveTo: { x: null, y: null },
+            entity: new PIXI.Graphics(),
+
+        };
 
     public vertexPointList: PIXI.Graphics[] = new Array();
     public isOpen = true;
@@ -41,11 +52,21 @@ export class Poly extends PIXI.Graphics {
 
         this.polygonShape = new PIXI.Polygon(this.vertexCoodinates.raw);
 
-        this.lineStyle(1, 0xffffff);
-        this.beginFill(0xffffff, 0.3);
+        this.interactive = true;
+        this.lineStyle(1, SharedPrefs.getInstance().color.white);
         this.pivot.set(0.5);
-        this.name = "Poly"; // <IMPROVE>
+        this.endFill();
         this.drawPolygon(this.polygonShape);
+
+        this.on("click",  (e) => {
+            this.clear();
+            this.lineStyle(2, SharedPrefs.getInstance().color.secondary);
+
+            this.beginFill(SharedPrefs.getInstance().color.white, 0);
+            this.drawPolygon(this.polygonShape);
+            console.log("poly");
+
+        });
 
         return this;
     }
@@ -78,7 +99,7 @@ export class Poly extends PIXI.Graphics {
         this.vertexPointList.push(vertex);
         let index: number;
 
-        vertex.on("mouseover", () => { // <MOVE>
+        vertex.on("mouseover", () => {
             index = Number.parseInt(vertex.name);
 
             // Adds event style
@@ -86,14 +107,14 @@ export class Poly extends PIXI.Graphics {
             vertex = this.vertexOverStyle(vertex, this.vertexCoodinates.vertex[index].x,
                 this.vertexCoodinates.vertex[index].y);
         });
-        vertex.on("mouseout", () => { // <MOVE>
+        vertex.on("mouseout", () => {
             index = Number.parseInt(vertex.name);
             // Adds event style
             vertex.clear();
             vertex = this.vertexStyle(vertex, this.vertexCoodinates.vertex[index].x,
                 this.vertexCoodinates.vertex[index].y);
         });
-        vertex.on("mousedown", () => { // <MOVE>
+        vertex.on("mousedown", () => {
             index = Number.parseInt(vertex.name);
             SharedPrefs.getInstance().clickedVertex = index; // Store the value to prevent loses
 
@@ -105,7 +126,7 @@ export class Poly extends PIXI.Graphics {
 
             this.vertexDragging = true;
         });
-        vertex.on("mouseup", () => { // <MOVE>
+        vertex.on("mouseup", () => {
             index = Number.parseInt(vertex.name);
             // Adds event style
             vertex.clear();
@@ -120,7 +141,7 @@ export class Poly extends PIXI.Graphics {
 
             delete (SharedPrefs.getInstance().clickedVertex); // Cleans to next
         });
-        vertex.on("rightclick", () => { // <MOVE>
+        vertex.on("rightclick", () => {
             index = Number.parseInt(vertex.name); // Update name
 
             this.vertexPointList.splice(index, 1); // Remove from array
@@ -134,7 +155,7 @@ export class Poly extends PIXI.Graphics {
 
             this.redraw();
         });
-        vertex.on("mousemove", () => { // <MOVE>
+        vertex.on("mousemove", () => {
             if (this.vertexDragging) {
                 // Updates the coordenades of polygon, then redraw <REFACT>
                 this.vertexCoodinates.raw[
@@ -157,6 +178,36 @@ export class Poly extends PIXI.Graphics {
 
         return vertex;
     }
+
+    /* public drawLine(x: number, y: number) {
+        let line = new PIXI.Graphics();
+
+        if (this.lines.lineTo.x === null) {
+            this.lines.lineTo.x = x;
+            this.lines.lineTo.y = y;
+        } else {
+            this.lines.lineTo.x = this.lines.moveTo.x;
+            this.lines.lineTo.y = this.lines.moveTo.y;
+        }
+
+        this.lines.moveTo.x = x;
+        this.lines.moveTo.y = y;
+
+        line.lineStyle(1, SharedPrefs.getInstance().color.main);
+
+        line.moveTo(
+            this.lines.moveTo.x,
+            this.lines.moveTo.y,
+        );
+        line.lineTo(
+            this.lines.lineTo.x,
+            this.lines.lineTo.y,
+        );
+        line.endFill();
+
+        return line;
+    } */
+
     public close() {
         this.polygonShape.close();
         this.isOpen = false;
@@ -164,21 +215,15 @@ export class Poly extends PIXI.Graphics {
 
     public redraw() {
         this.clear();
-        this.beginFill(0xffffff, 0.3);
-        this.lineStyle(1, 0xffffff);
+        this.lineStyle(1, SharedPrefs.getInstance().color.white);
+        this.beginFill(SharedPrefs.getInstance().color.white, 0.3);
         this.drawPolygon(this.polygonShape);
     }
 
-    public get entity() {
-        return {
-            body: this,
-            vertices: this.vertexPointList,
-        };
-    }
-
+    //////////////////////////////      STYLES      ///////////////////////////////////
     private vertexStyle(vertex: PIXI.Graphics, x: number, y: number): PIXI.Graphics {
         vertex.interactive = true;
-        vertex.beginFill(0xffffff);
+        vertex.beginFill(SharedPrefs.getInstance().color.white);
         vertex.pivot.x = 2;
         vertex.pivot.y = 2;
         vertex.position.x = x;
@@ -189,8 +234,8 @@ export class Poly extends PIXI.Graphics {
     private vertexOverStyle(vertex: PIXI.Graphics, x: number, y: number): PIXI.Graphics {
         vertex.interactive = true;
 
-        vertex.beginFill(0xffffff, 0);
-        vertex.lineStyle(1, 0xf45342);
+        vertex.beginFill(SharedPrefs.getInstance().color.white, 0);
+        vertex.lineStyle(1, SharedPrefs.getInstance().color.main);
         vertex.pivot.x = 4;
         vertex.pivot.y = 4;
         vertex.position.x = x;
@@ -201,8 +246,8 @@ export class Poly extends PIXI.Graphics {
     private vertexDownStyle(vertex: PIXI.Graphics, x: number, y: number): PIXI.Graphics {
         vertex.interactive = true;
 
-        vertex.beginFill(0xffffff);
-        vertex.lineStyle(1, 0xf45342);
+        vertex.beginFill(SharedPrefs.getInstance().color.white);
+        vertex.lineStyle(1, SharedPrefs.getInstance().color.main);
         vertex.pivot.x = 4;
         vertex.pivot.y = 4;
         vertex.position.x = x;
@@ -212,7 +257,7 @@ export class Poly extends PIXI.Graphics {
     }
     private mainVertexStyle(vertex: PIXI.Graphics, x: number, y: number): PIXI.Graphics {
         vertex.interactive = true;
-        vertex.beginFill(0xf45342);
+        vertex.beginFill(SharedPrefs.getInstance().color.main);
         vertex.pivot.x = 2.5;
         vertex.pivot.y = 2.5;
         vertex.position.x = x;
@@ -222,8 +267,8 @@ export class Poly extends PIXI.Graphics {
     }
     private mainVertexOverStyle(vertex: PIXI.Graphics, x: number, y: number): PIXI.Graphics {
         vertex.interactive = true;
-        vertex.beginFill(0xffffff, 0);
-        vertex.lineStyle(1, 0xffffff);
+        vertex.beginFill(SharedPrefs.getInstance().color.white, 0);
+        vertex.lineStyle(1, SharedPrefs.getInstance().color.white);
         vertex.pivot.x = 4;
         vertex.pivot.y = 4;
         vertex.position.x = x;
@@ -231,6 +276,8 @@ export class Poly extends PIXI.Graphics {
         vertex.drawRect(0, 0, 8, 8);
         return vertex;
     }
+    ////////////////////////////////////////////////////////////////////////////////////
+
 }
 
 interface VertexCoordinate {
