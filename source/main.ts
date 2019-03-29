@@ -2,12 +2,14 @@
  * @Author: WesFerreira - https://github.com/WesFerreira
  * @Date: 2019-01-12 07:42:41
  * @Last Modified by: WesFerreira
- * @Last Modified time: 2019-03-27 02:33:52
+ * @Last Modified time: 2019-03-29 07:36:35
  */
 // tslint:disable:object-literal-sort-keys
 
 import { WorkBench } from "./sections/WorkBench";
 import { SharedPrefs } from "./SharedPrefs";
+import { MetaPolygon } from "./entities/polygon/MetaPolygon";
+import { MetaLine } from "./entities/polygon/MetaLine";
 
 let wBench: WorkBench;
 
@@ -19,41 +21,44 @@ window.onload = function () {
         debug: false,
         allowSleep: true,
     });
-    /*
-        wBench.addListenners();
 
-        window.addEventListener("keydown", function(e) {
-            if (e.keyCode === 18) { // ALT
-                wBench.enableToClosePoly();
+    let poly = new PIXI.Graphics();
+    let shape = new PIXI.Polygon(0, 0, 250, 0, 250, 6, 0, 6);
+    shape.close();
+    poly.position.x = 45;
+    poly.position.y = 45;
+    poly.lineStyle(1, 0xffffff);
+    poly.drawPolygon(shape);
+
+    let meta = new MetaPolygon();
+
+    wBench.bench.on("click", function () {
+        meta.lineCoordinates.push({ x: 0, y: 0 });
+
+        if (meta.isOpen) {
+            meta.addVertex(
+                wBench.pixiApp.renderer.plugins.interaction.mouse.global.x,
+                wBench.pixiApp.renderer.plugins.interaction.mouse.global.y);
+            if (meta.lines.length > 0) {
+                wBench.pixiApp.stage.addChild(meta.newLine());
             }
-        });
-
-        window.addEventListener("mousemove", function (e) {
-
-            SharedPrefs.getInstance().mouseX = e.clientX;
-            SharedPrefs.getInstance().mouseY = e.clientY;
-
-        }); */
-
-    let g = new PIXI.Graphics();
-
-    g.lineStyle(1, 0xccffcc);
-
-    g.moveTo(0, 3);
-    g.lineTo(250, 3);
-    g.interactive = true;
-    g.beginFill(0xffffff, 0);
-    g.lineStyle(1, 0xccffcc, 0);
-    g.drawRect(0, 0, 250, 6);
-    g.endFill();
-    g.position.x = 500;
-    g.position.y = 200;
-
-    g.on("click", function () {
-        console.log("MetaClick");
-
+        }
     });
 
-    wBench.pixiApp.stage.addChild(g);
+    wBench.bench.on("rightclick", function () {
+        if (meta.lines.length >= 2) {
+            wBench.pixiApp.stage.addChild(meta.closeLine());
+        }
+    });
+
+    wBench.bench.on("mousemove", function () {
+        if (wBench.pixiApp.renderer.plugins.interaction.mouse.global.x === 0 &&
+            wBench.pixiApp.renderer.plugins.interaction.mouse.global.y === 0) {
+                console.log(0);
+
+            }
+    });
+
+    wBench.pixiApp.stage.addChild(poly);
 };
 
