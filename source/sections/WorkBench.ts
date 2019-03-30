@@ -18,11 +18,17 @@ export class WorkBench {
     public pixiApp: PIXI.Application;
     public bench = new PIXI.Graphics();
 
+    public width: number;
+    public height: number;
+
     public poly = new Poly();
 
     private clicks = 0;
 
     constructor(b2Options: B2AppOptions) {
+        this.width = b2Options.w;
+        this.height = b2Options.h;
+
         this.pixiApp = new PIXI.Application({
             width: b2Options.w,
             height: b2Options.h,
