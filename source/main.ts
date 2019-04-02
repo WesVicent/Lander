@@ -66,6 +66,9 @@ window.onload = function () {
             wBench.pixiApp.stage.addChild(meta.closeLine());
         }
     }); */
+	
+	
+	
 
     let a = sqr.position;
     let b: {x: number, y: number} = {x: 0, y: 0};
