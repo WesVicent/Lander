@@ -14,7 +14,6 @@ let dependencyContainer = new Container();
 
 dependencyContainer.bind<IBox2App>(IDENTFIER.SERVICE.BOX2APP).to(Mon.Helpers.Box2App);
 
-// tslint:disable-next-line:no-empty
 export function initBox2App(options: B2AppOptions) {
     dependencyContainer.bind<B2AppOptions>("B2AppOptions")
         .toConstantValue(options).whenInjectedInto(Mon.Helpers.Box2App);

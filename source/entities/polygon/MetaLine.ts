@@ -9,35 +9,62 @@ import { Coordinate } from "../../interfaces/PolygonInterfaces";
 
 export class MetaLine extends PIXI.Graphics {
     public internalCoordinates: Coordinate[] = new Array();
+    public isDebugging: boolean;
 
-    constructor(coordinates: Coordinate[]) {
+    private coordinates: Coordinate[];
+    private a: Coordinate;
+    private b: Coordinate;
+
+    constructor(coordinates: Coordinate[], debugMode?: boolean) {
         super();
+        this.coordinates = coordinates;
+        this.isDebugging = debugMode;
 
-        // this.internalCoordinates.push({ x: coordinates[0].x - coordinates[0].x, y: coordinates[0].y - coordinates[0].y });
-        // this.internalCoordinates.push({ x: coordinates[1].x - coordinates[0].x, y: coordinates[1].y - coordinates[0].y });
+        this.toInternalCoordinates();
 
-        this.internalCoordinates.push({ x: 0, y: 3 });
-        this.internalCoordinates.push({ x: 250, y: 3 });
+        this.pivot.x = 0;
+        this.pivot.y = 3;
 
-        if (this.internalCoordinates.length > 1) {
-            let a = coordinates[0];
-            let b = coordinates[1];
+        this.addGuideLine();
+        this.addReactiveArea();
 
-            this.pivot.x = 0;
-            this.pivot.y = 3;
-
-            this.position.set(a.x, a.y);
-
-            this.lineStyle(1, 0xccffcc);
-            this.moveTo(this.internalCoordinates[0].x, 0);
-            this.lineTo(b.x - a.x, b.y - a.y);
-            this.interactive = true;
-            // this.beginFill(0xffffff, 0);
-            // this.drawRect(0, 0, hipote, 6);
-            // g.lineStyle(1, 0xccffcc, 0);
-            // this.endFill();
-
-            console.log(coordinates);
-        }
+        this.interactive = true;
     }
+
+    // ------------------------------------------------------------------------------------------
+    //                                          PRIVATES
+    // ------------------------------------------------------------------------------------------
+
+    private toInternalCoordinates(): void {
+        this.a = this.coordinates[0];
+        this.b = { x: this.coordinates[1].x - this.a.x, y: this.coordinates[1].y - this.a.y };
+    }
+
+    private addGuideLine(): void {
+        this.lineStyle(1, 0xccffcc);
+        this.moveTo(0, 0);
+
+        this.position.set(this.a.x, this.a.y); // Start line vertex
+        this.lineTo(this.b.x, this.b.y); // End line vertex
+    }
+
+    private addReactiveArea(): void {
+        let reactAreaWeight = 3;
+
+        let shapeCoord = new PIXI.Polygon(
+            0 + reactAreaWeight, 0 - reactAreaWeight,
+            this.b.x + reactAreaWeight, this.b.y - reactAreaWeight,
+            this.b.x - reactAreaWeight, this.b.y + reactAreaWeight,
+            0 - reactAreaWeight, 0 + reactAreaWeight,
+        );
+
+        shapeCoord.close();
+
+        if (!this.isDebugging) {
+            this.lineStyle(null);
+        }
+
+        this.drawPolygon(shapeCoord);
+    }
+
 }
