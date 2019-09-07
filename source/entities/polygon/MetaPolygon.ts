@@ -2,7 +2,7 @@
 * @Author: WesFerreira - https://github.com/WesFerreira
 * @Date: 2019-03-28 17:10:46
  * @Last Modified by: WesFerreira
- * @Last Modified time: 2019-03-29 07:37:42
+ * @Last Modified time: 2019-09-06 22:41:17
 */
 
 import { SharedPrefs } from "../../SharedPrefs";
@@ -19,6 +19,8 @@ export class MetaPolygon {
     public addVertex(x: number, y: number) {
         this.shapeCoordinatesRaw.push(x, y);
         this.lineCoordinates.push({ x: x, y: y });
+        // console.log(this.lineCoordinates);
+
 
         if (this.shapeCoordinatesRaw.length / 2 === 2) {
             this.lines.push(new MetaLine(this.lineCoordinates));
