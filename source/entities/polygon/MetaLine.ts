@@ -11,10 +11,10 @@ import { ReactiveArea } from "../../math/ReactiveArea";
 export class MetaLine extends PIXI.Graphics {
     public internalCoordinates: Coordinate[] = new Array();
     public isDebugging: boolean;
+    public a: Coordinate;
+    public b: Coordinate;
 
     private points: LinePoints;
-    private a: Coordinate;
-    private b: Coordinate;
     private weight = 3;
 
     constructor(points: LinePoints, debugMode?: boolean) {
@@ -33,6 +33,10 @@ export class MetaLine extends PIXI.Graphics {
         this.interactive = true;
     }
 
+    public redraw () {
+        this.clear();
+        this.addGuideLine();
+    }
     // ------------------------------------------------------------------------------------------
     //                                          PRIVATES
     // ------------------------------------------------------------------------------------------

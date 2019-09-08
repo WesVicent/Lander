@@ -2,12 +2,13 @@
 * @Author: WesFerreira - https://github.com/WesFerreira
 * @Date: 2019-03-28 17:10:46
  * @Last Modified by: WesFerreira
- * @Last Modified time: 2019-09-08 13:14:58
+ * @Last Modified time: 2019-09-08 17:01:35
 */
 
 import { MetaLine } from "./MetaLine";
 import { Coordinate, LinePoints } from "../../interfaces/PolygonInterfaces";
 import { MetaVertexPoint } from "./MetaVertexPoint";
+import { Session } from "../../Session";
 
 export class MetaPolygon {
     public isOpen = true;
@@ -20,7 +21,7 @@ export class MetaPolygon {
     private lastPoints: LinePoints;
 
     public addVertex(coordinate: Coordinate): MetaVertexPoint {
-        this.vertices.push((new MetaVertexPoint(coordinate)));
+        this.vertices.push((new MetaVertexPoint(coordinate, this.vertices.length)));
 
         this.processLinePoints();
 
@@ -44,6 +45,22 @@ export class MetaPolygon {
         this.isOpen = false;
 
         return this.newLine();
+    }
+
+    public redraw (id: number) { // Loop
+        console.log("a");
+        console.log(this.lines[id].a);
+        console.log("b");
+        console.log(this.lines[id - 1].b);
+        console.log("mouse");
+        console.log(Session.getInstance().mouse());
+
+
+        this.lines[id - 1].b = { x: this.lines[id - 1].b.x - this.lines[id].a.x, y: this.lines[id - 1].b.y - this.lines[id].a.y};
+        this.lines[id].a = this.vertices[id].coordinate = Session.getInstance().mouse();
+
+        this.lines[id - 1].redraw();
+        this.lines[id].redraw();
     }
 
     // ------------------------------------------------------------------------------------------
