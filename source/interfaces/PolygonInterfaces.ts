@@ -9,3 +9,8 @@ export interface Coordinate {
     x: number;
     y: number;
 }
+
+export interface LinePoints {
+    a: Coordinate;
+    b: Coordinate;
+}

@@ -5,21 +5,21 @@
  * @Last Modified time: 2019-03-28 18:45:133
 */
 
-import { Coordinate } from "../../interfaces/PolygonInterfaces";
+import { Coordinate, LinePoints } from "../../interfaces/PolygonInterfaces";
 import { ReactiveArea } from "../../math/ReactiveArea";
 
 export class MetaLine extends PIXI.Graphics {
     public internalCoordinates: Coordinate[] = new Array();
     public isDebugging: boolean;
 
-    private coordinates: Coordinate[];
+    private points: LinePoints;
     private a: Coordinate;
     private b: Coordinate;
     private weight = 3;
 
-    constructor(coordinates: Coordinate[], debugMode?: boolean) {
+    constructor(points: LinePoints, debugMode?: boolean) {
         super();
-        this.coordinates = coordinates;
+        this.points = points;
         this.isDebugging = debugMode;
 
         this.toInternalCoordinates();
@@ -38,8 +38,8 @@ export class MetaLine extends PIXI.Graphics {
     // ------------------------------------------------------------------------------------------
 
     private toInternalCoordinates(): void {
-        this.a = this.coordinates[0];
-        this.b = { x: this.coordinates[1].x - this.a.x, y: this.coordinates[1].y - this.a.y };
+        this.a = this.points.a;
+        this.b = { x: this.points.b.x - this.a.x, y: this.points.b.y - this.a.y };
     }
 
     private addGuideLine(): void {
