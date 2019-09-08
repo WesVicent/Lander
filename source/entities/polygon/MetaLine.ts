@@ -6,7 +6,7 @@
 */
 
 import { Coordinate } from "../../interfaces/PolygonInterfaces";
-import { ReactiveArea } from "../../Math/ReactiveArea";
+import { ReactiveArea } from "../../math/ReactiveArea";
 
 export class MetaLine extends PIXI.Graphics {
     public internalCoordinates: Coordinate[] = new Array();
@@ -15,6 +15,7 @@ export class MetaLine extends PIXI.Graphics {
     private coordinates: Coordinate[];
     private a: Coordinate;
     private b: Coordinate;
+    private weight = 3;
 
     constructor(coordinates: Coordinate[], debugMode?: boolean) {
         super();
@@ -52,23 +53,14 @@ export class MetaLine extends PIXI.Graphics {
     private addReactiveArea(): void {
         let areaCoordinates: PIXI.Polygon;
 
-        switch (0) {
-            case this.b.x:
-
-                break;
-
-            default:
-                break;
-        }
-
         if ((this.b.x > 0 && this.b.y > 0) || (this.b.x < 0 && this.b.y < 0)) {
-            areaCoordinates = new PIXI.Polygon(ReactiveArea.rightDiagonal(3, this.b));
+            areaCoordinates = new PIXI.Polygon(ReactiveArea.rightDiagonal(this.weight, this.b));
         } else if ((this.b.x < 0 && this.b.y > 0) || (this.b.x > 0 && this.b.y < 0)) {
-            areaCoordinates = new PIXI.Polygon(ReactiveArea.leftDiagonal(3, this.b));
+            areaCoordinates = new PIXI.Polygon(ReactiveArea.leftDiagonal(this.weight, this.b));
         } else if (this.b.x === 0) {
-            areaCoordinates = new PIXI.Polygon(ReactiveArea.vertical(3, this.b));
+            areaCoordinates = new PIXI.Polygon(ReactiveArea.vertical(this.weight, this.b));
         } else if (this.b.y === 0) {
-            areaCoordinates = new PIXI.Polygon(ReactiveArea.horizontal(3, this.b));
+            areaCoordinates = new PIXI.Polygon(ReactiveArea.horizontal(this.weight, this.b));
         }
 
         areaCoordinates.close();
