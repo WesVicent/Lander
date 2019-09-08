@@ -31,7 +31,7 @@ export class WorkBench {
         initBox2App(b2Options);
         this.b2App = dependencyContainer.resolve<Box2AppService>(Box2AppService);
 
-        GridLayer.add(this.b2App.app);
+        // GridLayer.add(this.b2App.app);
     }
 
     public addListenners() {

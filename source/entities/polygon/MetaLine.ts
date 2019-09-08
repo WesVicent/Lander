@@ -6,6 +6,7 @@
 */
 
 import { Coordinate } from "../../interfaces/PolygonInterfaces";
+import { ReactiveArea } from "../../Math/ReactiveArea";
 
 export class MetaLine extends PIXI.Graphics {
     public internalCoordinates: Coordinate[] = new Array();
@@ -49,22 +50,34 @@ export class MetaLine extends PIXI.Graphics {
     }
 
     private addReactiveArea(): void {
-        let reactAreaWeight = 3;
+        let areaCoordinates: PIXI.Polygon;
 
-        let shapeCoord = new PIXI.Polygon(
-            0 + reactAreaWeight, 0 - reactAreaWeight,
-            this.b.x + reactAreaWeight, this.b.y - reactAreaWeight,
-            this.b.x - reactAreaWeight, this.b.y + reactAreaWeight,
-            0 - reactAreaWeight, 0 + reactAreaWeight,
-        );
+        switch (0) {
+            case this.b.x:
 
-        shapeCoord.close();
+                break;
+
+            default:
+                break;
+        }
+
+        if ((this.b.x > 0 && this.b.y > 0) || (this.b.x < 0 && this.b.y < 0)) {
+            areaCoordinates = new PIXI.Polygon(ReactiveArea.rightDiagonal(3, this.b));
+        } else if ((this.b.x < 0 && this.b.y > 0) || (this.b.x > 0 && this.b.y < 0)) {
+            areaCoordinates = new PIXI.Polygon(ReactiveArea.leftDiagonal(3, this.b));
+        } else if (this.b.x === 0) {
+            areaCoordinates = new PIXI.Polygon(ReactiveArea.vertical(3, this.b));
+        } else if (this.b.y === 0) {
+            areaCoordinates = new PIXI.Polygon(ReactiveArea.horizontal(3, this.b));
+        }
+
+        areaCoordinates.close();
 
         if (!this.isDebugging) {
             this.lineStyle(null);
         }
 
-        this.drawPolygon(shapeCoord);
+        this.drawPolygon(areaCoordinates);
     }
 
 }
