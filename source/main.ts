@@ -7,8 +7,11 @@
 // tslint:disable:object-literal-sort-keys
 
 import { WorkBench } from "./sections/WorkBench";
+import { Session } from "./Session";
 
 let wBench: WorkBench;
+
+// Session.getInstance();
 
 window.onload = function () {
     wBench = new WorkBench({

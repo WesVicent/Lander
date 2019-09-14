@@ -23,12 +23,13 @@ export class MetaPolygon {
     public addVertex(coordinate: Coordinate): MetaVertexPoint {
         this.vertices.push((new MetaVertexPoint(coordinate, this.vertices.length)));
 
-        this.processLinePoints();
 
         if (this.vertices.length === 2) {
+            this.processFirstLinePoints();
             this.lines.push(new MetaLine(this.firstPoints, this.debugMode));
         }
         if (this.vertices.length > 2) {
+            this.processMidLinePoints();
             this.lines.push(new MetaLine(this.midPoints, this.debugMode));
         }
 
@@ -40,6 +41,7 @@ export class MetaPolygon {
     }
 
     public closeLine(): MetaLine {
+        this.processLastLinePoints();
         this.lines.push(new MetaLine(this.lastPoints, this.debugMode));
 
         this.isOpen = false;
@@ -47,29 +49,46 @@ export class MetaPolygon {
         return this.newLine();
     }
 
-    public redraw (id: number) { // Loop
-        console.log("a");
-        console.log(this.lines[id].a);
-        console.log("b");
-        console.log(this.lines[id - 1].b);
-        console.log("mouse");
-        console.log(Session.getInstance().mouse());
-
-
-        this.lines[id - 1].b = { x: this.lines[id - 1].b.x - this.lines[id].a.x, y: this.lines[id - 1].b.y - this.lines[id].a.y};
-        this.lines[id].a = this.vertices[id].coordinate = Session.getInstance().mouse();
-
-        this.lines[id - 1].redraw();
-        this.lines[id].redraw();
+    public redraw(id: number) { // Loop
+        this.updateVertexPosition(id);
     }
 
     // ------------------------------------------------------------------------------------------
     //                                          PRIVATES
     // ------------------------------------------------------------------------------------------
 
-    private processLinePoints (): void {
-        this.firstPoints = { a: this.vertices[0], b: this.vertices[1] };
-        this.midPoints = { a: this.vertices[this.vertices.length - 2], b: this.vertices[this.vertices.length - 1] };
+    private updateVertexPosition(id: number) {
+        this.lines[id].redraw();
+        this.vertices[id].coordinate = this.lines[id].a = Session.getInstance().mouse();
+
+        // this.vertices[id].rearrange();
+
+        if (id === 0) { // First vertex
+            this.lines[this.lines.length - 1].b = Session.getInstance().mouse().diffAway(this.lines[this.lines.length - 1].a);
+            this.lines[id].b = this.lines[id].selfAway(this.lines[id + 1].a);
+
+            this.lines[this.lines.length - 1].redraw();
+        } else
+            if (id === this.lines.length - 1) { // Last vertex
+                this.lines[id - 1].b = Session.getInstance().mouse().diffAway(this.lines[id - 1].a);
+                this.lines[id].b = this.lines[id].selfAway(this.lines[0].a);
+
+                this.lines[id - 1].redraw();
+            } else { // Mid vertices
+                this.lines[id - 1].b = Session.getInstance().mouse().diffAway(this.lines[id - 1].a);
+                this.lines[id].b = this.lines[id].selfAway(this.lines[id + 1].a);
+
+                this.lines[id - 1].redraw();
+            }
+    }
+
+    private processFirstLinePoints(): void {
+        this.firstPoints = { a: this.vertices[0].coordinate, b: this.vertices[1].coordinate };
+    }
+    private processMidLinePoints(): void {
+        this.midPoints = { a: this.vertices[this.vertices.length - 2].coordinate, b: this.vertices[this.vertices.length - 1].coordinate };
+    }
+    private processLastLinePoints(): void {
         this.lastPoints = { a: this.vertices[this.vertices.length - 1].coordinate, b: this.vertices[0].coordinate };
     }
 }

@@ -14,3 +14,9 @@ export interface LinePoints {
     a: Coordinate;
     b: Coordinate;
 }
+
+export interface MouseCoordinate {
+    x: number;
+    y: number;
+    diffAway: (reference: Coordinate) => Coordinate;
+}

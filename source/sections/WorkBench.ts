@@ -11,7 +11,7 @@ import dependencyContainer, { initBox2App } from "../config/InversionOfControl";
 import { Box2AppService } from "../services/Box2AppService";
 import { GridLayer } from "../layers/GridLayer";
 import { Session } from "../Session";
-import { Coordinate } from "../interfaces/PolygonInterfaces";
+import { Coordinate, MouseCoordinate } from "../interfaces/PolygonInterfaces";
 import { MetaPolygon } from "../entities/polygon/MetaPolygon";
 
 export class WorkBench {
@@ -19,7 +19,7 @@ export class WorkBench {
     public bench = new PIXI.Graphics();
     public width: number;
     public height: number;
-    public mouse: Function;
+    public mouse: () => MouseCoordinate;
     public polygon: MetaPolygon;
 
     private pixiApp: PIXI.Application;
@@ -77,10 +77,16 @@ export class WorkBench {
         this.setupBench();
         this.pixiApp.stage.addChild(this.bench);
 
-        this.mouse = (): Coordinate => {
+        this.mouse = (): MouseCoordinate => {
             return {
                 x: this.pixiApp.renderer.plugins.interaction.mouse.global.x,
                 y: this.pixiApp.renderer.plugins.interaction.mouse.global.y,
+                diffAway: (difference: Coordinate): Coordinate => { // Removes difference away from coordinates
+                    return {
+                        x: this.pixiApp.renderer.plugins.interaction.mouse.global.x - difference.x,
+                        y: this.pixiApp.renderer.plugins.interaction.mouse.global.y - difference.y,
+                    };
+                },
             };
         };
     }

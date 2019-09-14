@@ -37,6 +37,14 @@ export class MetaLine extends PIXI.Graphics {
         this.clear();
         this.addGuideLine();
     }
+
+    public selfAway (reference: Coordinate): Coordinate { // Removes self coordinates from reference away
+        return {
+            x: reference.x - this.a.x,
+            y: reference.y - this.a.y,
+        };
+    }
+
     // ------------------------------------------------------------------------------------------
     //                                          PRIVATES
     // ------------------------------------------------------------------------------------------

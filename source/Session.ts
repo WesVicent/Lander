@@ -6,16 +6,16 @@
 */
 
 import { WorkBench } from "./sections/WorkBench";
-import { Coordinate } from "./interfaces/PolygonInterfaces";
+import { MouseCoordinate } from "./interfaces/PolygonInterfaces";
 
 // tslint:disable: member-ordering
 export class Session {
     private static _instance: Session;
     private clickedPointId: number;
 
-    public bench: WorkBench; // <IMPROVE> add WorkBench depencency in Poly.
-    public mouse = (): Coordinate => this.bench.mouse();
-    public clickedVertex: number; // <IMPROVE>
+    public bench: WorkBench;
+    public mouse = (): MouseCoordinate => this.bench.mouse();
+    public clickedVertex: number;
     public color = {
         main: 0xffd428,
         secondary: 0xbe0cff,
@@ -35,10 +35,11 @@ export class Session {
 
     private constructor() {
         this.addListeners();
+
     }
 
     private addListeners() {
-        window.addEventListener("mousedown", () => {});
+        window.addEventListener("mousedown", (e: MouseEvent) => {});
         window.addEventListener("mouseup", () => {
             this.redrawMetaPoly = false;
         });

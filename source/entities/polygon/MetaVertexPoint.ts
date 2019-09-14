@@ -10,37 +10,38 @@ import { Session } from "../../Session";
 
 export class MetaVertexPoint extends PIXI.Graphics {
 
-    public x: number;
-    public y: number;
     public coordinate: Coordinate;
     public id: number;
 
     private isMoving = false;
 
-    constructor (coordinate: Coordinate, id: number) {
+    constructor(coordinate: Coordinate, id: number) {
         super();
 
-        this.coordinate = coordinate;
+         this.coordinate = coordinate;
         this.id = id;
-        this.setup();
 
         this.interactive = true;
         this.beginFill(0xffffff);
         this.pivot.x = 2;
         this.pivot.y = 4;
-        this.position.x = this.x;
-        this.position.y = this.y;
+        this.position.x = this.coordinate.x;
+        this.position.y = this.coordinate.y;
         this.drawRect(0, 0, 4, 4);
 
         this.addListeners();
     }
 
-    private setup () {
-        this.x = this.coordinate.x;
-        this.y = this.coordinate.y;
+    // ------------------------------------------------------------------------------------------
+    //                                          PRIVATES
+    // ------------------------------------------------------------------------------------------
+
+    private rearrange(): void {
+        this.position.x = this.coordinate.x - 1;
+        this.position.y = this.coordinate.y - 1;
     }
 
-    private addListeners (): void {
+    private addListeners(): void {
         this.on("mouseover", () => {
             // Adds event style
             this.clear();
@@ -64,14 +65,9 @@ export class MetaVertexPoint extends PIXI.Graphics {
             this.vertexOverStyle();
 
             this.isMoving = false;
-
-            // Updates the position
-            // vertex.position.x = this.vertexCoodinates.vertex[SharedPrefs.getInstance().clickedVertex].x;
-            // vertex.position.y = this.vertexCoodinates.vertex[SharedPrefs.getInstance().clickedVertex].y;
-
-            // delete (SharedPrefs.getInstance().clickedVertex); // Cleans to next
+            this.rearrange();
         });
-        this.on("rightclick", () => {
+        this.on("rightclick", () => { // TODO: Remove point
             /* index = Number.parseInt(vertex.name); // Update name
 
             this.vertexPointList.splice(index, 1); // Remove from array
@@ -86,31 +82,23 @@ export class MetaVertexPoint extends PIXI.Graphics {
             this.redraw(); */
         });
         this.on("mousemove", () => {
-            if (this.isMoving) {
-                // Updates the coordenades of polygon, then redraw <REFACT>
-                this.x = Session.getInstance().mouse().x;
-
-                this.y = Session.getInstance().mouse().y + 4;
+            if (this.isMoving) { // Updates the coordenades of polygon, then redraw
+                this.position.x = Session.getInstance().mouse().x;
+                this.position.y = Session.getInstance().mouse().y + 4;
 
                 Session.getInstance().emitRedrawMetaPoly(this.id);
             }
         });
     }
 
-    /* private redraw() {
-        this.clear();
-        this.lineStyle(1, SharedPrefs.getInstance().color.white);
-        this.beginFill(SharedPrefs.getInstance().color.white, 0.3);
-        this.drawPolygon(this.polygonShape);
-    } */
-
+    //////////////////////////////      STYLES      ///////////////////////////////////
     private vertexStyle(): void {
         this.interactive = true;
         this.beginFill(Session.getInstance().color.white);
         this.pivot.x = 2;
         this.pivot.y = 4;
-        this.position.x = this.x;
-        this.position.y = this.y;
+        this.position.x = this.coordinate.x;
+        this.position.y = this.coordinate.y;
         this.drawRect(0, 0, 4, 4);
     }
     private vertexOverStyle(): void {
@@ -120,8 +108,8 @@ export class MetaVertexPoint extends PIXI.Graphics {
         this.lineStyle(1, Session.getInstance().color.main);
         this.pivot.x = 4;
         this.pivot.y = 8;
-        this.position.x = this.x;
-        this.position.y = this.y;
+        this.position.x = this.coordinate.x;
+        this.position.y = this.coordinate.y;
         this.drawRect(0, 0, 8, 8);
     }
     private vertexDownStyle(): void {
@@ -131,27 +119,9 @@ export class MetaVertexPoint extends PIXI.Graphics {
         this.lineStyle(1, Session.getInstance().color.main);
         this.pivot.x = 4;
         this.pivot.y = 8;
-        this.position.x = this.x;
-        this.position.y = this.y;
+        this.position.x = this.coordinate.x;
+        this.position.y = this.coordinate.y;
         this.drawRect(0, 0, 8, 8);
     }
-    private mainVertexStyle(): void {
-        this.interactive = true;
-        this.beginFill(Session.getInstance().color.main);
-        this.pivot.x = 2.5;
-        this.pivot.y = 2.5;
-        this.position.x = this.x;
-        this.position.y = this.y;
-        this.drawRect(0, 0, 5, 5);
-    }
-    private mainVertexOverStyle(): void {
-        this.interactive = true;
-        this.beginFill(Session.getInstance().color.white, 0);
-        this.lineStyle(1, Session.getInstance().color.white);
-        this.pivot.x = 4;
-        this.pivot.y = 4;
-        this.position.x = this.x;
-        this.position.y = this.y;
-        this.drawRect(0, 0, 8, 8);
-    }
+    ////////////////////////////////////////////////////////////////////////////////////
 }
